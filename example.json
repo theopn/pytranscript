@@ -1,0 +1,1 @@
+[{"num": 1, "courses": [{"name": "MA261", "grade": "B+", "crhr": 4}, {"name": "CS180", "grade": "A", "crhr": 4}, {"name": "CS193", "grade": "A", "crhr": 1}]}, {"num": 2, "courses": [{"name": "MA351", "grade": "A+", "crhr": 3}, {"name": "CS182", "grade": "A", "crhr": 3}, {"name": "CS240", "grade": "A", "crhr": 3}]}]

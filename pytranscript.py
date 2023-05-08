@@ -7,10 +7,10 @@ import json
 #       > 1
 #
 
-# Global transcript list containing all semester info
-TRANSCRIPT = []
+TRANSCRIPT_PATH = ""  # Path to the current transcript file
+TRANSCRIPT = []  # Global transcript list containing all semester info
 
-# Table for grade conversion
+# Table for grade conversion: According to Purdue and countless other colleges
 GRADE_TABLE = {
     "A+": 4.0, "A": 4.0, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7,
     "C+": 2.3, "C": 2.0, "C-": 1.7, "D+": 1.3, "D": 1.0, "D-": 0.7,
@@ -18,9 +18,7 @@ GRADE_TABLE = {
 }
 
 
-#
 # Error message should be in red
-#
 class ShColors:
     RED = "\033[0;31m"
     GREEN = "\033[0;32m"
@@ -94,9 +92,37 @@ class Semester:
         return repr
 
 
+def print_transcript():
+    """Print the current transcript and calculate overall GPA"""
+    if not TRANSCRIPT:
+        print(ShColors.YELLOW +
+              "Transcript is empty! " +
+              "Use 'Read Transcript' option to read a JSON file" +
+              ShColors.ENDC)
+        return
+
+    for semester in TRANSCRIPT:
+        print(semester)
+
+    total_gpa_hr = 0.0
+    total_cr = 0.0
+    for sem in TRANSCRIPT:
+        total_gpa_hr += sem.total_gpa_hr()
+        total_cr += sem.total_cr()
+    overall_gpa = total_gpa_hr / total_cr
+
+    print(
+        ShColors.CYAN +
+        f"Overall GPA: {overall_gpa:.2f}\n" +
+        f"Total GPA Hour: {total_gpa_hr:.2f}\n" +
+        f"Total Credit: {total_cr:.2f}\n" +
+        ShColors.ENDC
+    )
+
+
 def read_transcript():
     """Read the transcript from a given file"""
-    print(ShColors.CYAN + "Enter the file name" + ShColors.ENDC)
+    print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
     file_name = my_input(str)
     # Read the file. Data should be a list of dictionary repr of Semester
     with open(file_name, "r") as fp:
@@ -105,14 +131,16 @@ def read_transcript():
     for data in datum:
         TRANSCRIPT.append(Semester(data))
 
-    for semester in TRANSCRIPT:
-        print(semester)
+    # Print semester information
+    print_transcript()
 
 
 def add_new_sem():
     """Add a new semester object to the """
-    with open("hi.json", "w") as fp:
-        json.dump(TRANSCRIPT, fp)
+    print("I'm working on it bro")
+    pass
+    # with open("hi.json", "w") as fp:
+    #     json.dump(TRANSCRIPT, fp)
 
 
 def menu():
@@ -120,36 +148,37 @@ def menu():
     # Table in the form of:
     # Num: ["Prompt", func_to_execute]
     opts = {
-        1: ["Read the current transcript", read_transcript],
-        2: ["Add a new semester to the transcript", print],
+        1: ["Read a JSON transcript", read_transcript],
+        2: ["Print the current transcript", print_transcript],
+        3: ["Add a new semester to the transcript", add_new_sem],
         0: ["Exit (or Ctrl+c)", "EXIT"]
     }
 
     usr_input = -1
-    usr_slct = ""
+    exec = ""
     while True:
         for key, val in opts.items():
             print(f"{key}. {val[0]}")
         # Get input
         usr_input = my_input(int)
         try:
-            usr_slct = opts[usr_input][1]
+            exec = opts[usr_input][1]
         except KeyError:
             print(ShColors.RED + "Read the prompt again" + ShColors.ENDC)
             continue
         # Check for exit
-        if isinstance(usr_slct, str) and usr_slct == "EXIT":
+        if isinstance(exec, str) and exec == "EXIT":
             raise KeyboardInterrupt
         # Execute the user choice
-        usr_slct()
+        exec()
 
 
 def main():
     """Main function to call menu and handle KeyboardInterrupt"""
     try:
-        print(ShColors.GREEN
-              + "You really can't wait two days for the grades to be out huh"
-              + ShColors.ENDC)
+        print(ShColors.GREEN +
+              "You really can't wait two days for the grades to be out huh" +
+              ShColors.ENDC)
         menu()
     except KeyboardInterrupt:
         print(ShColors.YELLOW + "\nBye" + ShColors.ENDC)

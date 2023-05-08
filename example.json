@@ -24,7 +24,7 @@
         "courses": [
             {
                 "name": "MA351",
-                "grade": "A+",
+                "grade": "A",
                 "crhr": 3
             },
             {
@@ -36,6 +36,56 @@
                 "name": "CS240",
                 "grade": "A",
                 "crhr": 3
+            }
+        ]
+    },
+    {
+        "num": 3,
+        "courses": [
+            {
+                "name": "CS250",
+                "grade": "B",
+                "crhr": 4.0
+            },
+            {
+                "name": "CS251",
+                "grade": "A",
+                "crhr": 3.0
+            },
+            {
+                "name": "PHIL110",
+                "grade": "A+",
+                "crhr": 3.0
+            },
+            {
+                "name": "PHIL302",
+                "grade": "A+",
+                "crhr": 4.0
+            }
+        ]
+    },
+    {
+        "num": 4,
+        "courses": [
+            {
+                "name": "CS252",
+                "grade": "A",
+                "crhr": 4.0
+            },
+            {
+                "name": "CS348",
+                "grade": "A",
+                "crhr": 3.0
+            },
+            {
+                "name": "PHIL303",
+                "grade": "A-",
+                "crhr": 3.0
+            },
+            {
+                "name": "PHIL553",
+                "grade": "A+",
+                "crhr": 3.0
             }
         ]
     }

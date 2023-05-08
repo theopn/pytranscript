@@ -133,9 +133,9 @@ def print_transcript():
     overall_gpa = total_gpa_hr / total_cr
     print(
         ShColors.CYAN +
-        f"Overall GPA: {overall_gpa:.2f}\n" +
         f"Total GPA Hour: {total_gpa_hr:.2f}\n" +
         f"Total Credit: {total_cr:.2f}\n" +
+        f"Overall GPA: {overall_gpa:.2f}\n" +
         ShColors.ENDC
     )
 

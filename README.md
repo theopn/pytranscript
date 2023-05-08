@@ -13,10 +13,10 @@ Dependencies:
 
 - Python 3
 - JSON package for Python
-- Working computer with more than 3KB of storage
-- Input device
+- Working computer with more than 13KB of storage (plus however large your JSON file would be -- watch out super seniors)
+- Input device, keyboard strongly recommended
 
-```bash
+```sh
 git clone https://github.com/theopn/pytranscript.git
 cd pytranscript
 python3 pytranscript.py

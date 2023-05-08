@@ -92,13 +92,32 @@ class Semester:
         return repr
 
 
-def print_transcript():
-    """Print the current transcript and calculate overall GPA"""
-    if not TRANSCRIPT:
-        print(ShColors.YELLOW +
+def check_transcript_existence() -> bool:
+    """Helper function to check if trnascript data exists"""
+    if not TRANSCRIPT or not TRANSCRIPT_PATH:
+        print(ShColors.RED +
               "Transcript is empty! " +
               "Use 'Read Transcript' option to read a JSON file" +
+              "Or add a new semester to the transcript" +
               ShColors.ENDC)
+        return False
+    return True
+
+
+def save_transcript():
+    """Writes the current transcript data to a file"""
+    if not check_transcript_existence():
+        return
+    with open(TRANSCRIPT_PATH, "w") as fp:
+        sem_dict_list = []
+        for sem in TRANSCRIPT:
+            sem_dict_list.append(vars(sem))
+        json.dump(sem_dict_list, fp, indent=4)
+
+
+def print_transcript():
+    """Print the current transcript and calculate overall GPA"""
+    if not check_transcript_existence():
         return
 
     for semester in TRANSCRIPT:
@@ -131,16 +150,20 @@ def read_transcript():
     for data in datum:
         TRANSCRIPT.append(Semester(data))
 
+    # Definition of a variable in Python is local by default
+    global TRANSCRIPT_PATH
+    TRANSCRIPT_PATH = file_name
     # Print semester information
     print_transcript()
 
 
 def add_new_sem():
-    """Add a new semester object to the """
-    print("I'm working on it bro")
-    pass
-    # with open("hi.json", "w") as fp:
-    #     json.dump(TRANSCRIPT, fp)
+    """Add a new semester object to the current transcript var and save"""
+    save_transcript()
+
+
+def modify_transcript():
+    print("Ngl, it's faster to just modify the JSON file itself.")
 
 
 def menu():
@@ -151,6 +174,7 @@ def menu():
         1: ["Read a JSON transcript", read_transcript],
         2: ["Print the current transcript", print_transcript],
         3: ["Add a new semester to the transcript", add_new_sem],
+        4: ["Modify transcript", modify_transcript],
         0: ["Exit (or Ctrl+c)", "EXIT"]
     }
 
@@ -175,6 +199,7 @@ def menu():
 
 def main():
     """Main function to call menu and handle KeyboardInterrupt"""
+    save_transcript()
     try:
         print(ShColors.GREEN +
               "You really can't wait two days for the grades to be out huh" +
@@ -182,6 +207,7 @@ def main():
         menu()
     except KeyboardInterrupt:
         print(ShColors.YELLOW + "\nBye" + ShColors.ENDC)
+    save_transcript()
 
 
 if __name__ == "__main__":

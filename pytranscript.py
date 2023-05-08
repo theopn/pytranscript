@@ -1,3 +1,5 @@
+import json
+
 #
 # CLI Grade calculator in Python
 # Over-OOP-ed
@@ -5,7 +7,10 @@
 #       > 1
 #
 
+# Global transcript list containing all semester info
+TRANSCRIPT = []
 
+# Table for grade conversion
 GRADE_TABLE = {
     "A+": 4.0, "A": 4.0, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7,
     "C+": 2.3, "C": 2.0, "C-": 1.7, "D+": 1.3, "D": 1.0, "D-": 0.7,
@@ -13,6 +18,9 @@ GRADE_TABLE = {
 }
 
 
+#
+# Error message should be in red
+#
 class ShColors:
     RED = "\033[0;31m"
     GREEN = "\033[0;32m"
@@ -27,6 +35,7 @@ class ShColors:
 
 
 def my_input(input_type: type) -> type:
+    """General purpose type-checking input func"""
     try:
         return input_type(input("> "))
     except ValueError:
@@ -34,34 +43,43 @@ def my_input(input_type: type) -> type:
         return my_input(input_type)
 
 
-class Course:
-    def __init__(self, name: str, grade: str, crhr: int) -> None:
-        """Initialize a single course instance"""
-        self.name = name        # Name of the course
-        self.grade = grade      # Grade received
-        self.crhr = crhr        # Credit hour
-
-    def __str__(self) -> str:
-        """Return a formatted string as a part of the Semester table"""
-        return f"| {self.name:10} | {self.grade:5} | {self.crhr:5} |\n"
+def course_dict_str(crs: dict) -> str:
+    """
+    Course dictionaries are in the format of:
+    { "name": "CS252", "grade": "A+", "crhr": 4 }
+    This func returns a formatted string to be a part of the Semester table
+    """
+    return f"| {crs['name']:10} | {crs['grade']:5} | {crs['crhr']:5} |\n"
 
 
 class Semester:
-    def __init__(self, num: int, courses: Course) -> None:
-        """Initialize a Semester object with list of Courses"""
-        self.num = num          # Number of semester (1, 2, etc.)
-        self.courses = courses  # Course array
+    def __init__(self, *args) -> None:
+        if len(args) == 2 and isinstance(args[0], int) \
+                and isinstance(args[1], list):
+            """Initialize a Semester object with list of Courses"""
+            self.num = args[0]      # Number of semester (1, 2, etc.)
+            self.courses = args[1]  # Course list
+        elif len(args) == 1 and isinstance(args[0], dict):
+            """
+            Initialize a Semester object with dict read from JSON file
+            e.g.:
+            {'num': 1, 'courses': [{'name': 'MA261', 'grade': 'A+', 'crhr': 4},
+                                   {'name': 'CS180', 'grade': 'A', 'crhr': 3}]}
+            """
+            for key in args[0]:
+                # Yes, json.load() even converts dictionaries within a list
+                setattr(self, key, args[0][key])
 
     def total_cr(self) -> int:
         """Calculate total credit hour"""
-        return sum([course.crhr for course in self.courses])
+        return sum([course["crhr"] for course in self.courses])
 
     def total_gpa_hr(self) -> float:
         """Calculate total GPA hour: Sigma (crhr * grade point)"""
-        return sum([course.crhr * GRADE_TABLE[course.grade.upper()]
+        return sum([course["crhr"] * GRADE_TABLE[course["grade"].upper()]
                     for course in self.courses])
 
-    def gpa_calc(self) -> float:
+    def gpa(self) -> float:
         """Calculate semester GPA"""
         return self.total_gpa_hr() / self.total_cr()
 
@@ -71,34 +89,40 @@ class Semester:
                 "| CLASS      | GRADE | CR HR |\n"
                 "|------------|-------|-------|\n")
         for course in self.courses:
-            repr += course.__str__()
-        repr += f"| TOTAL      | {self.gpa_calc():5} | {self.total_cr():5} |\n"
+            repr += course_dict_str(course)
+        repr += f"| TOTAL      | {self.gpa():5.2f} | {self.total_cr():5} |\n"
         return repr
 
 
-class Transcript:
-    def __init__(self, semesters: Semester) -> None:
-        """Initialize a Semester object with list of Semesters"""
-        self.semesters = semesters
-
-    def __str__(self) -> str:
-        """Append multiple Semester grade tables separated by new line"""
-        return '\n'.join([semester.__str__() for semester in self.semesters])
-
-
 def read_transcript():
+    """Read the transcript from a given file"""
     print(ShColors.CYAN + "Enter the file name" + ShColors.ENDC)
-    hi = my_input(str)
-    print(hi)
+    file_name = my_input(str)
+    # Read the file. Data should be a list of dictionary repr of Semester
+    with open(file_name, "r") as fp:
+        datum = json.load(fp)
+    # Add each Semester object to the global TRANSCRIPT list
+    for data in datum:
+        TRANSCRIPT.append(Semester(data))
+
+    for semester in TRANSCRIPT:
+        print(semester)
+
+
+def add_new_sem():
+    """Add a new semester object to the """
+    with open("hi.json", "w") as fp:
+        json.dump(TRANSCRIPT, fp)
 
 
 def menu():
+    """Infinitely prompt user for selection until EXIT code was given"""
     # Table in the form of:
     # Num: ["Prompt", func_to_execute]
     opts = {
         1: ["Read the current transcript", read_transcript],
         2: ["Add a new semester to the transcript", print],
-        3: ["Exit (or Ctrl+c)", "EXIT"]
+        0: ["Exit (or Ctrl+c)", "EXIT"]
     }
 
     usr_input = -1
@@ -114,13 +138,14 @@ def menu():
             print(ShColors.RED + "Read the prompt again" + ShColors.ENDC)
             continue
         # Check for exit
-        if type(usr_slct) == str and usr_slct == "EXIT":
+        if isinstance(usr_slct, str) and usr_slct == "EXIT":
             raise KeyboardInterrupt
-        # Execute the use choice
+        # Execute the user choice
         usr_slct()
 
 
 def main():
+    """Main function to call menu and handle KeyboardInterrupt"""
     try:
         print(ShColors.GREEN
               + "You really can't wait two days for the grades to be out huh"
@@ -128,12 +153,6 @@ def main():
         menu()
     except KeyboardInterrupt:
         print(ShColors.YELLOW + "\nBye" + ShColors.ENDC)
-
-    ma261 = Course("MA261", "B+", 4)
-    cs180 = Course("cs180", "A", 3)
-    sem1 = Semester(1, [ma261, cs180])
-    ts = Transcript([sem1, sem1])
-    print(ts)
 
 
 if __name__ == "__main__":

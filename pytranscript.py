@@ -177,9 +177,9 @@ def add_new_sem():
     while True:
         try:
             print("Course name:")
-            name = my_input(str)
+            name = my_input(str).upper()
             print("Grade (A+, A, A-, etc.):")
-            grade = my_input(str)
+            grade = my_input(str).upper()
             print("Credit hour:")
             crhr = my_input(float)
             courses.append({"name": name, "grade": grade, "crhr": crhr})

@@ -9,7 +9,12 @@ Option 2 it is then.
 
 ## Usage
 
-Make sure you have Python version >= 3.6 (I'm sure lower version works fine, but you really should start upgrading your system if you are still using < 3.6), working computer with more than 3KB of storage, and some input device (keyboard preferred).
+Dependencies:
+
+- Python 3
+- JSON package for Python
+- Working computer with more than 3KB of storage
+- Input device
 
 ```bash
 git clone https://github.com/theopn/pytranscript.git
@@ -17,10 +22,49 @@ cd pytranscript
 python3 pytranscript.py
 ```
 
-In the pytranscript:
+In pytranscript.py:
 
 ```
+1. Read a JSON transcript
+2. ...
+> 1
+Enter the JSON file name
+> transcript.json
 
+1. ...
+2. ...
+3. Add a new semester to the transcript
+> 3
+Enter the semester number:
+> 5
+Enter Course informations.
+Do not include courses with no GPA value (i.e. Pass/Not Pass)
+When you are done, use Control + c to termimate
+Course name:
+> CS690
+Grade (A+, A, A-, etc.):
+> A+
+Credit hour:
+> 5.0
+Course name:
+> ^C
+Breaking out of the adding course mode...
+
+1. ...
+2. Print the current transcript
+> 2
+-------- Semester:  n --------
+| ...                        |
+
+-------- Semester:  5 --------
+| CLASS      | GRADE | CR HR |
+|------------|-------|-------|
+| CS690      | A+    |   5.0 |
+| TOTAL      |  4.00 |   5.0 |
+
+Total GPA Hour: 180.30
+Total Credit: 47.00
+Overall GPA: 3.84
 ```
 
 ## Oops

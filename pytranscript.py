@@ -120,16 +120,17 @@ def print_transcript():
     if not check_transcript_existence():
         return
 
+    # Print semester transcript
     for semester in TRANSCRIPT:
         print(semester)
 
+    # Calculate GPA stats
     total_gpa_hr = 0.0
     total_cr = 0.0
     for sem in TRANSCRIPT:
         total_gpa_hr += sem.total_gpa_hr()
         total_cr += sem.total_cr()
     overall_gpa = total_gpa_hr / total_cr
-
     print(
         ShColors.CYAN +
         f"Overall GPA: {overall_gpa:.2f}\n" +
@@ -146,6 +147,9 @@ def read_transcript():
     # Read the file. Data should be a list of dictionary repr of Semester
     with open(file_name, "r") as fp:
         datum = json.load(fp)
+    # Reset current transcript
+    global TRANSCRIPT
+    TRANSCRIPT = []
     # Add each Semester object to the global TRANSCRIPT list
     for data in datum:
         TRANSCRIPT.append(Semester(data))
@@ -159,10 +163,35 @@ def read_transcript():
 
 def add_new_sem():
     """Add a new semester object to the current transcript var and save"""
+    if not TRANSCRIPT_PATH:
+        print(ShColors.RED + "No transcript file has been specified!\n" +
+              "Please use 'Read Transcript' to add a file" + ShColors.ENDC)
+        return
+
+    print("Enter the semester number: ")
+    sem_num = my_input(int)
+    print("Enter Course informations.\n"
+          "Do not include courses with no GPA value (i.e. Pass/Not Pass)\n"
+          "When you are done, use Control + c to termimate")
+    courses = []
+    while True:
+        try:
+            print("Course name:")
+            name = my_input(str)
+            print("Grade (A+, A, A-, etc.):")
+            grade = my_input(str)
+            print("Credit hour:")
+            crhr = my_input(float)
+            courses.append({"name": name, "grade": grade, "crhr": crhr})
+        except KeyboardInterrupt:
+            print("\nBreaking out of the adding course mode...")
+            break
+    TRANSCRIPT.append(Semester(sem_num, courses))
     save_transcript()
 
 
 def modify_transcript():
+    """It's supposed to modify the transcript, it doesn't"""
     print("Ngl, it's faster to just modify the JSON file itself.")
 
 
@@ -192,14 +221,13 @@ def menu():
             continue
         # Check for exit
         if isinstance(exec, str) and exec == "EXIT":
-            raise KeyboardInterrupt
+            return
         # Execute the user choice
         exec()
 
 
 def main():
     """Main function to call menu and handle KeyboardInterrupt"""
-    save_transcript()
     try:
         print(ShColors.GREEN +
               "You really can't wait two days for the grades to be out huh" +
@@ -207,7 +235,6 @@ def main():
         menu()
     except KeyboardInterrupt:
         print(ShColors.YELLOW + "\nBye" + ShColors.ENDC)
-    save_transcript()
 
 
 if __name__ == "__main__":

@@ -32,8 +32,10 @@ class ShColors:
     UNDLINE = "\033[4m"
 
 
-def my_input(input_type: type) -> type:
-    """General purpose type-checking input func"""
+def my_input(input_type: type, *args) -> type:
+    """General purpose type-checking input func. Takes optional msg to print"""
+    for msg in args:
+        print(msg)
     try:
         return input_type(input("> "))
     except ValueError:
@@ -158,8 +160,8 @@ def open_transcript(**kwargs):
     if "filename" in kwargs:
         file_name = kwargs["filename"]
     else:
-        print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
-        file_name = my_input(str)
+        file_name = my_input(
+            str, ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
 
     TRANSCRIPT_FILE = file_name
     # Read the file. Data should be a list of dictionary repr of Semester
@@ -190,20 +192,17 @@ def add_new_sem():
               "Please use 'Read Transcript' to add a file" + ShColors.ENDC)
         return
 
-    print("Enter the semester number:")
-    sem_num = my_input(int)
+    sem_num = my_input(int, "Enter the semester number:")
     print(ShColors.CYAN + "Course Info Enter Mode:\n" + ShColors.ENDC
           + "Do not include courses with no GPA value (i.e. Pass/Not Pass).\n"
-          + "When you are done, use Control + c to terminate.")
+          + ShColors.RED + "When you are done, use Control + c to terminate."
+          + ShColors.ENDC)
     courses = []
     while True:
         try:
-            print("Course name:")
-            name = my_input(str).upper()
-            print("Grade (A+, A, A-, etc.):")
-            grade = my_input(str).upper()
-            print("Credit hour:")
-            crhr = my_input(float)
+            name = my_input(str, "Course name:").upper()
+            grade = my_input(str, "Grade (A+, A, A-, etc.):").upper()
+            crhr = my_input(float, "Credit hour:")
             courses.append({"name": name, "grade": grade, "crhr": crhr})
         except KeyboardInterrupt:
             print("\nEnding the Course Info Enter Mode...")

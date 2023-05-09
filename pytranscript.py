@@ -192,9 +192,9 @@ def add_new_sem():
 
     print("Enter the semester number:")
     sem_num = my_input(int)
-    print("Course Info Enter Mode:\n"
-          "Do not include courses with no GPA value (i.e. Pass/Not Pass)\n"
-          "When you are done, use Control + c to termimate")
+    print(ShColors.CYAN + "Course Info Enter Mode:\n" + ShColors.ENDC
+          + "Do not include courses with no GPA value (i.e. Pass/Not Pass).\n"
+          + "When you are done, use Control + c to terminate.")
     courses = []
     while True:
         try:
@@ -257,8 +257,6 @@ def menu():
 
 def main():
     """Main function to call menu and handle KeyboardInterrupt"""
-    global TRANSCRIPT_FILE
-
     try:
         print(ShColors.GREEN +
               "You really can't wait two days for the grades to be out huh" +

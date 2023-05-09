@@ -25,12 +25,14 @@ python3 pytranscript.py
 In pytranscript.py:
 
 ```
+No file currently open
 1. Open (or create) a JSON transcript
 2. ...
 > 1
 Enter the JSON file name
 > transcript.json
 
+Current file: transcript.json
 1. ...
 2. ...
 3. Add a new semester to the transcript
@@ -50,6 +52,7 @@ Course name:
 > ^C
 Breaking out of the adding course mode...
 
+Current file: transcript.json
 1. ...
 2. Print the current transcript
 > 2

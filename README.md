@@ -25,7 +25,7 @@ python3 pytranscript.py
 In pytranscript.py:
 
 ```
-1. Read a JSON transcript
+1. Open (or create) a JSON transcript
 2. ...
 > 1
 Enter the JSON file name

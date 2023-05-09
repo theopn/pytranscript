@@ -19,18 +19,22 @@ Dependencies:
 ```sh
 git clone https://github.com/theopn/pytranscript.git
 cd pytranscript
-python3 pytranscript.py
+python3 pytranscript.py <optional-file-name>
 ```
 
 In pytranscript.py:
 
 ```
+# 1: open a file (can be skipped by supplying a sys arg)
+
 No file currently open
 1. Open (or create) a JSON transcript
 2. ...
 > 1
 Enter the JSON file name
 > transcript.json
+
+# 2: Add a new semester information. Terminate using Ctrl+c
 
 Current file: transcript.json
 1. ...
@@ -52,12 +56,17 @@ Course name:
 > ^C
 Breaking out of the adding course mode...
 
+# 3: Access the transcript and calculated GPA
+
 Current file: transcript.json
 1. ...
 2. Print the current transcript
 > 2
 -------- Semester:  n --------
-| ...                        |
+| CLASS      | GRADE | CR HR |
+|------------|-------|-------|
+| CS590      | A-    |   3.0 |
+...
 
 -------- Semester:  5 --------
 | CLASS      | GRADE | CR HR |

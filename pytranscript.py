@@ -6,7 +6,7 @@ import json
 # Usage: python3 pytranscript.py
 #
 
-TRANSCRIPT_PATH = ""  # Path to the current transcript file
+TRANSCRIPT_FILE = ""  # Path to the current transcript file
 TRANSCRIPT = []       # Global transcript list containing all semester info
 
 # Table for grade conversion: According to Purdue and countless other colleges
@@ -101,7 +101,7 @@ class Semester:
 
 def check_transcript_existence() -> bool:
     """Helper function to check if trnascript data exists"""
-    if not TRANSCRIPT or not TRANSCRIPT_PATH:
+    if not TRANSCRIPT or not TRANSCRIPT_FILE:
         print(ShColors.RED +
               "Transcript is empty! " +
               "Use 'Read Transcript' option to read a JSON file" +
@@ -115,7 +115,7 @@ def save_transcript():
     """Writes the current transcript data to a file"""
     if not check_transcript_existence():
         return
-    with open(TRANSCRIPT_PATH, "w") as fp:
+    with open(TRANSCRIPT_FILE, "w") as fp:
         sem_dict_list = []
         for sem in TRANSCRIPT:
             sem_dict_list.append(vars(sem))
@@ -150,13 +150,13 @@ def print_transcript():
 def open_transcript():
     """Read the transcript from a given file"""
     # Definition of a variable in Python is local by default
-    global TRANSCRIPT_PATH
+    global TRANSCRIPT_FILE
     global TRANSCRIPT
 
     # Get file name from the user and open it
     print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
     file_name = my_input(str)
-    TRANSCRIPT_PATH = file_name
+    TRANSCRIPT_FILE = file_name
 
     # Read the file. Data should be a list of dictionary repr of Semester
     try:
@@ -181,7 +181,7 @@ def open_transcript():
 
 def add_new_sem():
     """Add a new semester object to the current transcript var and save"""
-    if not TRANSCRIPT_PATH:
+    if not TRANSCRIPT_FILE:
         print(ShColors.RED + "No transcript file has been specified!\n" +
               "Please use 'Read Transcript' to add a file" + ShColors.ENDC)
         return
@@ -228,6 +228,13 @@ def menu():
     usr_input = -1
     exec = ""
     while True:
+        # Display the current open file
+        if not TRANSCRIPT_FILE:
+            print(ShColors.BLUE + "No file currently open" + ShColors.ENDC)
+        else:
+            print(ShColors.BLUE +
+                  f"Current transcript: {TRANSCRIPT_FILE}" + ShColors.ENDC)
+        # Prompt menus
         for key, val in opts.items():
             print(f"{key}. {val[0]}")
         # Get input

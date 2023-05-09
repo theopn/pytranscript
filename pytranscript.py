@@ -1,4 +1,5 @@
 import json
+import sys
 
 #
 # CLI Grade calculator in Python
@@ -147,17 +148,20 @@ def print_transcript():
     )
 
 
-def open_transcript():
-    """Read the transcript from a given file"""
+def open_transcript(**kwargs):
+    """Read the transcript from a given file or get a user input"""
     # Definition of a variable in Python is local by default
     global TRANSCRIPT_FILE
     global TRANSCRIPT
 
-    # Get file name from the user and open it
-    print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
-    file_name = my_input(str)
-    TRANSCRIPT_FILE = file_name
+    # Check if file name was supplied
+    if "filename" in kwargs:
+        file_name = kwargs["filename"]
+    else:
+        print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
+        file_name = my_input(str)
 
+    TRANSCRIPT_FILE = file_name
     # Read the file. Data should be a list of dictionary repr of Semester
     try:
         with open(file_name, "r") as fp:
@@ -253,10 +257,16 @@ def menu():
 
 def main():
     """Main function to call menu and handle KeyboardInterrupt"""
+    global TRANSCRIPT_FILE
+
     try:
         print(ShColors.GREEN +
               "You really can't wait two days for the grades to be out huh" +
               ShColors.ENDC)
+        # Check for a arg and import if one was supplied
+        if len(sys.argv) > 1:
+            open_transcript(filename=sys.argv[1])
+        # Proceed with menu
         menu()
     except KeyboardInterrupt:
         print(ShColors.YELLOW + "\nBye" + ShColors.ENDC)

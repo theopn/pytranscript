@@ -1,9 +1,9 @@
 # Pytranscript
 
-It is Sunday 7 May 2023. I just wrapped up my fourth semester this week, but I am still unsure about grades for two of my classes. Grades are officially due on Tuesday 9 May 2023 for instructors, so I have two options:
+It is Sunday 7 May 2023. I just wrapped up my fourth semester this week, but I am still unsure about my grades for two of my classes. Grades are officially due on Tuesday 9 May 2023 for instructors, so I have two options:
 
 1. Touch some grass, hang out with my friends and family, and give myself some time to relax after a tough semester
-2. Sit in the room with Diet Coke and make a grade calculator to "automate" process of calculating what happens to my GPA if I get an A- instead of an A in the philosophy class
+2. Sit in the room with Diet Coke and make a grade calculator to "automate" the process of calculating what happens to my GPA if I get an A- instead of an A in the philosophy class
 
 Option 2 it is then.
 
@@ -43,9 +43,9 @@ Current file: transcript.json
 > 3
 Enter the semester number:
 > 5
-Enter Course informations.
-Do not include courses with no GPA value (i.e. Pass/Not Pass)
-When you are done, use Control + c to termimate
+Course Info Enter Mode:
+Do not include courses with no GPA value (i.e. Pass/Not Pass).
+When you are done, use Control + c to terminate.
 Course name:
 > CS690
 Grade (A+, A, A-, etc.):
@@ -81,7 +81,7 @@ Overall GPA: 3.84
 
 ## Oops
 
-As I finished making this, I just realized that I took databases class this semester and I could've just used SQL.
+As I finished making this, I just realized that I took a databases class this semester and I could've just used SQL.
 
 ```sql
 CREATE TABLE SemesterFour (

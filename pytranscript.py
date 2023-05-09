@@ -2,13 +2,12 @@ import json
 
 #
 # CLI Grade calculator in Python
-# Over-OOP-ed
+# Unnecessary OOP because everything is an object if you think deeply
 # Usage: python3 pytranscript.py
-#       > 1
 #
 
 TRANSCRIPT_PATH = ""  # Path to the current transcript file
-TRANSCRIPT = []  # Global transcript list containing all semester info
+TRANSCRIPT = []       # Global transcript list containing all semester info
 
 # Table for grade conversion: According to Purdue and countless other colleges
 GRADE_TABLE = {
@@ -44,8 +43,9 @@ def my_input(input_type: type) -> type:
 def course_dict_str(crs: dict) -> str:
     """
     Course dictionaries are in the format of:
-    { "name": "CS252", "grade": "A+", "crhr": 4 }
+    { "name": "CS252", "grade": "A", "crhr": 4.0 }
     This func returns a formatted string to be a part of the Semester table
+    | CS252      | A    | 4.0     |
     """
     return f"| {crs['name']:10} | {crs['grade']:5} | {crs['crhr']:5} |\n"
 
@@ -72,14 +72,21 @@ class Semester:
         """Calculate total credit hour"""
         return sum([course["crhr"] for course in self.courses])
 
-    def total_gpa_hr(self) -> float:
-        """Calculate total GPA hour: Sigma (crhr * grade point)"""
-        return sum([course["crhr"] * GRADE_TABLE[course["grade"].upper()]
-                    for course in self.courses])
+    def total_qlty_pt(self) -> float:
+        """Calculate total quality points: Sigma (crhr * grade point)"""
+        try:
+            return sum([course["crhr"] * GRADE_TABLE[course["grade"].upper()]
+                        for course in self.courses])
+        except KeyError:
+            print(ShColors.RED
+                  + f"There was an error with a grade in semester {self.num}. "
+                  + "Make sure to only have a valid grade in your JSON file."
+                  + ShColors.ENDC)
+            return 0.0
 
     def gpa(self) -> float:
         """Calculate semester GPA"""
-        return self.total_gpa_hr() / self.total_cr()
+        return self.total_qlty_pt() / self.total_cr()
 
     def __str__(self) -> str:
         """Return a .md table representation of this semester's grade info"""
@@ -125,38 +132,49 @@ def print_transcript():
         print(semester)
 
     # Calculate GPA stats
-    total_gpa_hr = 0.0
+    total_qlty_pt = 0.0
     total_cr = 0.0
     for sem in TRANSCRIPT:
-        total_gpa_hr += sem.total_gpa_hr()
+        total_qlty_pt += sem.total_qlty_pt()
         total_cr += sem.total_cr()
-    overall_gpa = total_gpa_hr / total_cr
+    overall_gpa = total_qlty_pt / total_cr
     print(
         ShColors.CYAN +
-        f"Total GPA Hour: {total_gpa_hr:.2f}\n" +
+        f"Total Quality Points: {total_qlty_pt:.2f}\n" +
         f"Total Credit: {total_cr:.2f}\n" +
         f"Overall GPA: {overall_gpa:.2f}\n" +
         ShColors.ENDC
     )
 
 
-def read_transcript():
+def open_transcript():
     """Read the transcript from a given file"""
+    # Definition of a variable in Python is local by default
+    global TRANSCRIPT_PATH
+    global TRANSCRIPT
+
+    # Get file name from the user and open it
     print(ShColors.CYAN + "Enter the JSON file name" + ShColors.ENDC)
     file_name = my_input(str)
+    TRANSCRIPT_PATH = file_name
+
     # Read the file. Data should be a list of dictionary repr of Semester
-    with open(file_name, "r") as fp:
-        datum = json.load(fp)
+    try:
+        with open(file_name, "r") as fp:
+            datum = json.load(fp)
+    except FileNotFoundError:
+        print(ShColors.YELLOW
+              + "File not found. "
+              + f"{file_name} will be used to save data if new data is added."
+              + ShColors.ENDC)
+        return
+
     # Reset current transcript
-    global TRANSCRIPT
     TRANSCRIPT = []
     # Add each Semester object to the global TRANSCRIPT list
     for data in datum:
         TRANSCRIPT.append(Semester(data))
 
-    # Definition of a variable in Python is local by default
-    global TRANSCRIPT_PATH
-    TRANSCRIPT_PATH = file_name
     # Print semester information
     print_transcript()
 
@@ -168,9 +186,9 @@ def add_new_sem():
               "Please use 'Read Transcript' to add a file" + ShColors.ENDC)
         return
 
-    print("Enter the semester number: ")
+    print("Enter the semester number:")
     sem_num = my_input(int)
-    print("Enter Course informations.\n"
+    print("Course Info Enter Mode:\n"
           "Do not include courses with no GPA value (i.e. Pass/Not Pass)\n"
           "When you are done, use Control + c to termimate")
     courses = []
@@ -184,7 +202,7 @@ def add_new_sem():
             crhr = my_input(float)
             courses.append({"name": name, "grade": grade, "crhr": crhr})
         except KeyboardInterrupt:
-            print("\nBreaking out of the adding course mode...")
+            print("\nEnding the Course Info Enter Mode...")
             break
     TRANSCRIPT.append(Semester(sem_num, courses))
     save_transcript()
@@ -200,7 +218,7 @@ def menu():
     # Table in the form of:
     # Num: ["Prompt", func_to_execute]
     opts = {
-        1: ["Read a JSON transcript", read_transcript],
+        1: ["Open (or create) a JSON transcript", open_transcript],
         2: ["Print the current transcript", print_transcript],
         3: ["Add a new semester to the transcript", add_new_sem],
         4: ["Modify transcript", modify_transcript],

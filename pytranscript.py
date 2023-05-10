@@ -155,6 +155,8 @@ def open_transcript(**kwargs):
     # Definition of a variable in Python is local by default
     global TRANSCRIPT_FILE
     global TRANSCRIPT
+    # Reset current transcript
+    TRANSCRIPT = []
 
     # Check if file name was supplied
     if "filename" in kwargs:
@@ -175,8 +177,6 @@ def open_transcript(**kwargs):
               + ShColors.ENDC)
         return
 
-    # Reset current transcript
-    TRANSCRIPT = []
     # Add each Semester object to the global TRANSCRIPT list
     for data in datum:
         TRANSCRIPT.append(Semester(data))
